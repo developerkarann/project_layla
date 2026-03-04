@@ -35,7 +35,7 @@ export default function Footer() {
   const footerSettings = settings?.footer ?? {};
   const visionText = footerSettings.visionText ?? "I dream of a world where we all live together in harmony, where our hearts are so free that our whole being opens to a joyful, purposeful and accomplished path";
   const copyrightText = footerSettings.copyrightText ?? "© 2026 REIKI | All Rights Reserved";
-  const siteName = footerSettings.siteName ?? "Layla";
+  const siteName = footerSettings.siteName ?? "Layla Choug";
 
   const { fields, loading } = useContent("global", "disclaimer");
   const disclaimerText = loading ? DEFAULT_DISCLAIMER : (getFieldValue(fields, "text") || DEFAULT_DISCLAIMER);
@@ -51,7 +51,7 @@ export default function Footer() {
           {/* Brand + description */}
           <div className="space-y-4 sm:space-y-5">
             <a href="/" className="font-script text-2xl font-semibold sm:text-3xl md:text-4xl">
-              {siteName}
+              Layla Choug
             </a>
             <p className="text-sm sm:text-base leading-relaxed text-white/90">
               {visionText}

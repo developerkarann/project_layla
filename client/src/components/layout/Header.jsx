@@ -19,7 +19,7 @@ export default function Header() {
   const dispatch = useDispatch();
   const settings = useSelector(selectSettings);
   const header = settings?.header ?? {};
-  const siteName = header.siteName ?? "Layla";
+  const siteName = header.siteName ?? "Layla Choug";
   const phone = header.phone ?? "+1 234 567 8900";
   const ctaLabel = header.ctaLabel ?? "Get in touch";
 
@@ -52,7 +52,7 @@ export default function Header() {
           to="/"
           className="absolute left-1/2 flex -translate-x-1/2 flex-col items-center font-script text-xl font-semibold text-reiki-dark sm:text-3xl md:text-4xl"
         >
-          {siteName}
+          Layla Choug
           <span className="mt-0.5 block h-px w-8 bg-reiki-dark/40" aria-hidden />
         </Link>
 

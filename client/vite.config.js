@@ -8,7 +8,8 @@ export default defineConfig({
   plugins: [react(), tailwindcss()],
   server: {
     proxy: {
-      "/api": { target: "http://localhost:5000", changeOrigin: true },
+      // "/api": { target: "http://localhost:5000", changeOrigin: true },
+      "/api": { target: "https://project-layla-cghn.vercel.app/", changeOrigin: true },
     },
   },
 })
