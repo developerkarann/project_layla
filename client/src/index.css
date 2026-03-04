@@ -1,0 +1,72 @@
+@import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..800;1,400..800&family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap');
+@import "tailwindcss";
+
+@theme {
+  /* Reiki design palette – exact match to design */
+  --color-reiki-topbar: #dce8d9;
+  --color-reiki-dark: #3a4f3f;
+  --color-reiki-section: #f8fdf7;
+  --color-reiki-section-alt: #e8f2e7;
+  --color-reiki-accent: #d5e7d1;
+  --color-reiki-light-text: #6b8f71;
+  --color-reiki-text: #1a2e1a;
+  --color-reiki-muted: #4a5d4a;
+  --color-page-bg: #fdfdfd;
+  /* Alternating section background (navbar, home, then every second section) */
+  --color-reiki-bg-stripe: #eff5e3;
+  /* Follower shaped holder (line + icon) – light green, subtle */
+  --color-reiki-holder-line: #b5d0ae;
+  --color-reiki-holder-fill: #b5d0ae;
+  --color-reiki-holder-inner: #5a6b5a;
+  /* Benefits section: light green circle for checkmark icon */
+  --color-reiki-benefit-icon: #d5e7d1;
+  /* HolisticHealingIntro section */
+  --color-reiki-olive: #90a46f;
+  --color-reiki-body: #5e5e5e;
+  /* Levels section: card border and description text */
+  --color-reiki-card-border: #e2e6d8;
+  --color-reiki-level-desc: #7a8b6f;
+  /* Newsletter section: left text and button text, combined border */
+  --color-reiki-newsletter-text: #333333;
+  --color-reiki-newsletter-placeholder: #9ca39e;
+  --color-reiki-newsletter-border: #333333;
+  /* Testimonial: quote text (dark green-grey), attribution (faded) */
+  --color-reiki-quote: #4a5c4a;
+  --color-reiki-quote-attribution: #8a9a8a;
+  --font-script: "Dancing Script", cursive;
+  --font-serif: "Lora", Georgia, serif;
+  --font-sans: "Source Sans 3", system-ui, sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-sans);
+  color: var(--color-reiki-text);
+}
+
+.font-script {
+  font-family: var(--font-script);
+}
+
+.font-serif {
+  font-family: var(--font-serif);
+}
+
+.font-garamond {
+  font-family: var(--font-garamond);
+}
+
+.font-lato {
+  font-family: var(--font-lato);
+}
+
+.scrollbar-hide {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}

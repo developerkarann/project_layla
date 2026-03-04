@@ -1,0 +1,130 @@
+/**
+ * Admin dashboard navigation: pages and their content sections.
+ * Used to build sidebar tabs and subsections for editing content.
+ */
+export const ADMIN_NAV = [
+  {
+    page: "Home",
+    slug: "home",
+    icon: "Home",
+    sections: [
+      { label: "Hero Slider", key: "hero-slider" },
+      { label: "Holistic Healing Intro", key: "holistic-healing-intro" },
+      { label: "Awaken Self-Healing", key: "awaken-self-healing" },
+      { label: "About Jane", key: "about-jane" },
+      { label: "Levels (Healing Practices)", key: "levels" },
+      { label: "Blog Section", key: "blog-section" },
+      { label: "Gallery Section", key: "gallery-section" },
+      { label: "Newsletter", key: "newsletter" },
+      { label: "Testimonials", key: "testimonial" },
+    ],
+  },
+  {
+    page: "About",
+    slug: "about",
+    icon: "User",
+    sections: [
+      { label: "Hero", key: "hero" },
+      { label: "Intro (Hi I'm Layla)", key: "intro" },
+      { label: "Mission", key: "mission" },
+      { label: "Approach & Values", key: "approach-values" },
+      { label: "Awaken", key: "awaken" },
+      { label: "Vision", key: "vision" },
+      { label: "Training & Practice", key: "training" },
+      { label: "Journey", key: "journey" },
+      { label: "Testimonial", key: "testimonial" },
+      { label: "CTA", key: "cta" },
+    ],
+  },
+  {
+    page: "Services",
+    slug: "services",
+    icon: "Services",
+    sections: [
+      { label: "Hero", key: "hero" },
+      { label: "Intro Quote", key: "intro-quote" },
+      { label: "Three Paths Overview", key: "three-paths" },
+      { label: "How to Choose", key: "how-to-choose" },
+      { label: "At a Glance", key: "at-a-glance" },
+      { label: "Final CTA", key: "cta" },
+    ],
+  },
+  {
+    page: "Gallery",
+    slug: "gallery",
+    icon: "Gallery",
+    sections: [
+      { label: "Hero", key: "hero" },
+      { label: "Intro Quote", key: "intro-quote" },
+      { label: "Healing Spaces", key: "healing-spaces" },
+      { label: "Nature & Stillness", key: "nature-stillness" },
+      { label: "Practice & Presence", key: "practice-presence" },
+      { label: "Closing CTA", key: "cta" },
+    ],
+  },
+  {
+    page: "Blog",
+    slug: "blog",
+    icon: "Blog",
+    sections: [
+      { label: "All Blogs", key: "all-blogs" },
+      { label: "Hero", key: "hero" },
+      { label: "Topics Strip", key: "topics" },
+      { label: "Intro Quote", key: "intro-quote" },
+      { label: "Featured label", key: "featured" },
+      { label: "Latest Stories", key: "latest" },
+      { label: "Divider Quote", key: "divider" },
+      { label: "More Reflections", key: "more" },
+      { label: "Why I Write (Author)", key: "author" },
+      { label: "Stay in the loop", key: "cta" },
+    ],
+  },
+  {
+    page: "Events",
+    slug: "events",
+    icon: "Calendar",
+    sections: [
+      { label: "All Events", key: "all-events" },
+      { label: "Hero", key: "hero" },
+      { label: "Intro Quote", key: "intro-quote" },
+      { label: "Divider Quote", key: "divider" },
+      { label: "CTA", key: "cta" },
+    ],
+  },
+  {
+    page: "Membership",
+    slug: "membership",
+    icon: "Sparkles",
+    sections: [
+      { label: "All Membership", key: "all-membership" },
+      { label: "Hero", key: "hero" },
+      { label: "Intro Quote", key: "intro-quote" },
+      { label: "CTA", key: "cta" },
+    ],
+  },
+  {
+    page: "Contact",
+    slug: "contact",
+    icon: "Contact",
+    sections: [{ label: "All Contact", key: "all-contact" }],
+  },
+  {
+    page: "Availability",
+    slug: "availability",
+    icon: "Calendar",
+    sections: [
+      { label: "Page Title & Demo Text", key: "intro" },
+      { label: "Calendar & Time Slots", key: "calendar" },
+    ],
+  },
+  {
+    page: "Site-wide",
+    slug: "global",
+    icon: "Globe",
+    sections: [
+      { label: "Header", key: "header" },
+      { label: "Footer", key: "footer" },
+      { label: "Disclaimer", key: "disclaimer" },
+    ],
+  },
+];
