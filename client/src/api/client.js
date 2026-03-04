@@ -1,8 +1,11 @@
 /**
  * API client base. All requests go through this so we can change base URL and error handling in one place.
- * In dev, Vite proxies /api to the backend; in production set VITE_API_URL.
+ * In dev, Vite proxies /api to the backend. In production we always call the backend URL so it works on Vercel.
  */
-const API_BASE = import.meta.env.VITE_API_URL ?? "";
+const PRODUCTION_API_URL = "https://project-layla-cghn.vercel.app";
+const API_BASE =
+  import.meta.env.VITE_API_URL ??
+  (import.meta.env.PROD ? PRODUCTION_API_URL : "");
 
 /**
  * Performs a GET request and returns JSON. Returns null on 404.
