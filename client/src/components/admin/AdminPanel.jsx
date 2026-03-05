@@ -1,11 +1,13 @@
 import { useState, useEffect, useCallback } from "react";
 import { HiPencil, HiPhoto, HiDocumentText, HiArrowPath, HiCloudArrowUp } from "react-icons/hi2";
+import toast from "react-hot-toast";
 import { getSectionContent } from "../../data/adminSectionContent";
 import { getSection, putSection } from "../../api/content";
 import AdminAllBlogs from "./AdminAllBlogs";
 import AdminEvents from "../../pages/admin/AdminEvents";
 import AdminAllMembership from "./AdminAllMembership";
 import AdminAllContact from "./AdminAllContact";
+import AdminSecurity from "./AdminSecurity";
 
 function mergeWithDefaults(apiSection, prototype) {
   const fields = (apiSection?.fields?.length ? apiSection.fields : prototype?.fields ?? []).map((f) => ({
@@ -50,7 +52,8 @@ export default function AdminPanel({ page, pageSlug, section, sectionLabel }) {
     (pageSlug === "blog" && section === "all-blogs") ||
     (pageSlug === "events" && section === "all-events") ||
     (pageSlug === "membership" && section === "all-membership") ||
-    (pageSlug === "contact" && section === "all-contact");
+    (pageSlug === "contact" && section === "all-contact") ||
+    (pageSlug === "global" && section === "admin-password");
 
   const loadSection = useCallback(async () => {
     if (!pageSlug || !section) return;
@@ -71,7 +74,9 @@ export default function AdminPanel({ page, pageSlug, section, sectionLabel }) {
       setImages(imgs);
       setImageFiles({});
     } catch (err) {
-      setLoadError(err.message || "Failed to load section");
+      const msg = err.message || "Failed to load section";
+      setLoadError(msg);
+      toast.error(msg);
       const { fields: f, images: imgs } = mergeWithDefaults(null, prototype);
       setFields(f);
       setImages(imgs);
@@ -118,9 +123,11 @@ export default function AdminPanel({ page, pageSlug, section, sectionLabel }) {
       });
       setSaveStatus("success");
       setImageFiles({});
+      toast.success("Section saved successfully");
       setTimeout(() => setSaveStatus(null), 3000);
     } catch (err) {
       setSaveStatus("error");
+      toast.error(err?.message || "Failed to save section");
     } finally {
       setSaving(false);
     }
@@ -131,6 +138,7 @@ export default function AdminPanel({ page, pageSlug, section, sectionLabel }) {
     if (pageSlug === "events" && section === "all-events") return <AdminEvents />;
     if (pageSlug === "membership" && section === "all-membership") return <AdminAllMembership />;
     if (pageSlug === "contact" && section === "all-contact") return <AdminAllContact />;
+    if (pageSlug === "global" && section === "admin-password") return <AdminSecurity />;
   }
 
   return (

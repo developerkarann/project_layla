@@ -4,6 +4,7 @@
  */
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import toast from "react-hot-toast";
 import { fetchContact, updateContact } from "../../store/slices/contactSlice";
 import { selectContact, selectContactLoading } from "../../store/slices/contactSlice";
 import { CONTACT_FALLBACK } from "../../utils/fallbacks";
@@ -101,8 +102,10 @@ export default function AdminAllContact() {
     setSaving(true);
     try {
       await dispatch(updateContact(toPayload(form))).unwrap();
+      toast.success("Contact page saved successfully");
     } catch (err) {
       console.error(err);
+      toast.error(err?.message || "Failed to save contact page");
     } finally {
       setSaving(false);
     }

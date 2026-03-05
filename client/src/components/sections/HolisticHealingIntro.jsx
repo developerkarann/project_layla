@@ -1,8 +1,13 @@
+import { useContent, getFieldValue } from "../../hooks/useContent";
 import LotusSectionIcon from "../LotusSectionIcon";
 
-
-
 export default function HolisticHealingIntro() {
+  const { fields } = useContent("home", "holistic-healing-intro");
+  const title = getFieldValue(fields, "title") || "Holistic healing for empowered living";
+  const body = getFieldValue(fields, "body") || "Create the life you want to live.";
+  const lastWord = title.split(" ").pop();
+  const titleStart = title.split(" ").slice(0, -1).join(" ");
+
   return (
     <section
       id="what-is-reiki"
@@ -13,14 +18,12 @@ export default function HolisticHealingIntro() {
         <div className="text-center lg:text-left font-sans flex flex-col items-center lg:items-start">
           <h2 className="leading-tight font-garamond">
             <span className="block text-2xl font-normal sm:text-2xl md:text-3xl lg:text-5xl xl:text-6xl mb-2 sm:mb-3">
-              Holistic  <span className="text-reiki-olive">healing</span> for
-            </span>
-            <span className="block text-2xl font-normal sm:text-2xl md:text-3xl lg:text-5xl xl:text-6xl mb-2 sm:mb-3">
-              empowered living
+              {titleStart}{" "}
+              {lastWord ? <span className="text-reiki-olive">{lastWord}</span> : null}
             </span>
           </h2>
           <p className="font-lato text-sm leading-relaxed text-reiki-body sm:text-base md:text-lg mt-4 xl:text-2xl md:mt-5">
-            Create the life you want to live !
+            {body}
           </p>
           <a href="/about" className="relative mt-6 sm:mt-8 inline-block rounded px-6 py-2.5 sm:px-8 sm:py-3 font-sans text-sm sm:text-base font-semibold text-white transition hover:opacity-90 bg-reiki-dark">
             Learn more
@@ -28,10 +31,7 @@ export default function HolisticHealingIntro() {
         </div>
         <div className="max-w-xl lg:max-w-none">
           <p className="text-left font-lato text-sm leading-relaxed text-reiki-body sm:text-base md:text-lg mb-3 sm:mb-4">
-            My mission is to ignite self-empowerment and self-healing through quantum shifts of consciousness. I believe in the ripple effect of all things: one deep positive change in a person can create boundless positive outcome far beyond this one person
-          </p>
-          <p className="text-left font-lato text-sm leading-relaxed text-reiki-body sm:text-base md:text-lg mb-3 sm:mb-4" >
-            My approach to achieve this goal is rooted in the consideration that you are a conscious and intelligent being with infinite potential and powers. My ethics and values are founded on the respect of your free choice and inner knowing of what is good for you. On that basis, it is a privilege to accompany you and witness your blossoming, your joy, your victories but also help you overcome sorrows, loss, hurts and transcend struggles.
+            {body}
           </p>
         </div>
       </div>

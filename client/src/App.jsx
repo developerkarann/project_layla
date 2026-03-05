@@ -11,13 +11,13 @@ import AboutPage from "./pages/AboutPage";
 import AvailabilityPage from "./pages/AvailabilityPage";
 import EventsPage from "./pages/EventsPage";
 import MembershipPage from "./pages/MembershipPage";
-import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminGate from "./pages/admin/AdminGate";
 
 function App() {
   return (
     <div className="min-h-screen min-w-0 overflow-x-hidden bg-page-bg antialiased">
       <Routes>
-        <Route path="/admin" element={<AdminDashboard />} />
+        <Route path="/admin" element={<AdminGate />} />
         <Route
           path="*"
           element={

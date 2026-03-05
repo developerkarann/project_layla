@@ -8,7 +8,6 @@ import { selectServices, selectServicesLoading, selectServicesError } from "../s
 import { fetchBlogPosts } from "../store/slices/blogSlice";
 import { selectBlogPosts } from "../store/slices/blogSlice";
 
-const HERO_IMAGE = "/awaken-final.jpg";
 
 /** Build 3 path objects from services/three-paths content (fields + images). */
 function buildPathsFromContent(fields, images) {
@@ -122,8 +121,15 @@ export default function ServicesPage() {
   const error = useSelector(selectServicesError);
   const blogPosts = useSelector(selectBlogPosts);
 
+  const heroContent = useContent("services", "hero");
+  const introQuoteContent = useContent("services", "intro-quote");
   const threePathsContent = useContent("services", "three-paths");
   const atAGlanceContent = useContent("services", "at-a-glance");
+
+  const heroTitle = getFieldValue(heroContent.fields, "title") || "Services";
+  const heroSubtitle = getFieldValue(heroContent.fields, "subtitle") || "Three paths to wholeness—Shamanic Healing, TCK Holistic Coaching, and Vitality Qigong. Each meets you where you are.";
+  const heroImage = heroContent.images?.find((i) => i.id === "main")?.url || "/awaken-final.jpg";
+  const introQuote = getFieldValue(introQuoteContent.fields, "quote") || "Healing is not one size fits all. Whether you are drawn to the depth of shamanic work, the clarity of coaching, or the gentle power of Qigong—there is a path here for you.";
 
   const pathsFromContent = useMemo(
     () => buildPathsFromContent(threePathsContent.fields, threePathsContent.images),
@@ -159,14 +165,14 @@ export default function ServicesPage() {
         </div>
       )}
       <section className="relative min-h-[55vh] sm:min-h-[60vh] md:min-h-[65vh] flex items-end justify-center overflow-hidden">
-        <img src={HERO_IMAGE} alt="" className="absolute inset-0 h-full w-full object-cover object-top md:object-[50%_20%] scale-105" />
+        <img src={heroImage} alt="" className="absolute inset-0 h-full w-full object-cover object-top md:object-[50%_20%] scale-105" />
         <div className="absolute inset-0 bg-gradient-to-b from-reiki-dark/25 via-reiki-dark/45 to-reiki-dark/75" aria-hidden />
         <div className="relative z-10 w-full max-w-7xl px-4 pb-16 pt-24 sm:pb-20 md:pb-24 text-center">
           <h1 className="mt-4 font-garamond text-4xl font-normal text-white sm:text-5xl md:text-6xl lg:text-7xl" style={{ fontFamily: "EB Garamond" }}>
-            Services
+            {heroTitle}
           </h1>
           <p className="mt-4 font-lato text-base text-white/90 sm:text-lg md:text-xl max-w-2xl mx-auto">
-            Three paths to wholeness—Shamanic Healing, TCK Holistic Coaching, and Vitality Qigong. Each meets you where you are.
+            {heroSubtitle}
           </p>
         </div>
       </section>
@@ -174,7 +180,7 @@ export default function ServicesPage() {
       <section className="bg-reiki-bg-stripe border-y border-reiki-accent/40 py-12 md:py-16">
         <div className="mx-auto max-w-4xl px-4 text-center">
           <p className="font-serif text-lg italic text-reiki-quote sm:text-xl md:text-2xl leading-relaxed" style={{ fontFamily: "Lora" }}>
-            “Healing is not one size fits all. Whether you are drawn to the depth of shamanic work, the clarity of coaching, or the gentle power of Qigong—there is a path here for you.”
+            {introQuote}
           </p>
         </div>
       </section>

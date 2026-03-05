@@ -3,6 +3,7 @@
  */
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import toast from "react-hot-toast";
 import {
   fetchMembershipData,
   createTier,
@@ -76,13 +77,19 @@ export default function AdminAllMembership() {
         cta: formTier.cta.trim() || "Join",
         highlighted: formTier.highlighted,
       };
-      if (editingTier) await dispatch(updateTier({ id: formTier.id, body })).unwrap();
-      else await dispatch(createTier(body)).unwrap();
+      if (editingTier) {
+        await dispatch(updateTier({ id: formTier.id, body })).unwrap();
+        toast.success("Tier updated successfully");
+      } else {
+        await dispatch(createTier(body)).unwrap();
+        toast.success("Tier created successfully");
+      }
       setEditingTier(null);
       setFormTier(emptyTier);
       dispatch(fetchMembershipData());
     } catch (err) {
       console.error(err);
+      toast.error(err?.message || "Failed to save tier");
     } finally {
       setSaving(false);
     }
@@ -93,8 +100,10 @@ export default function AdminAllMembership() {
       await dispatch(removeTier(id)).unwrap();
       if (editingTier === id) setEditingTier(null);
       dispatch(fetchMembershipData());
+      toast.success("Tier deleted");
     } catch (err) {
       console.error(err);
+      toast.error(err?.message || "Failed to delete tier");
     }
   };
 
@@ -108,13 +117,19 @@ export default function AdminAllMembership() {
     setSaving(true);
     try {
       const body = { id: formHealing.id, title: formHealing.title.trim(), type: formHealing.type.trim() || "Content", description: formHealing.description.trim() };
-      if (editingHealing) await dispatch(updateHealingItem({ id: formHealing.id, body })).unwrap();
-      else await dispatch(createHealingItem(body)).unwrap();
+      if (editingHealing) {
+        await dispatch(updateHealingItem({ id: formHealing.id, body })).unwrap();
+        toast.success("Healing Space item updated successfully");
+      } else {
+        await dispatch(createHealingItem(body)).unwrap();
+        toast.success("Healing Space item created successfully");
+      }
       setEditingHealing(null);
       setFormHealing(emptyHealing);
       dispatch(fetchMembershipData());
     } catch (err) {
       console.error(err);
+      toast.error(err?.message || "Failed to save Healing Space item");
     } finally {
       setSaving(false);
     }
@@ -125,8 +140,10 @@ export default function AdminAllMembership() {
       await dispatch(removeHealingItem(id)).unwrap();
       if (editingHealing === id) setEditingHealing(null);
       dispatch(fetchMembershipData());
+      toast.success("Healing Space item deleted");
     } catch (err) {
       console.error(err);
+      toast.error(err?.message || "Failed to delete item");
     }
   };
 
@@ -140,13 +157,19 @@ export default function AdminAllMembership() {
     setSaving(true);
     try {
       const body = { id: formProduct.id, title: formProduct.title.trim(), type: formProduct.type.trim() || "Product", description: formProduct.description.trim(), priceLabel: formProduct.priceLabel.trim() };
-      if (editingProduct) await dispatch(updateProduct({ id: formProduct.id, body })).unwrap();
-      else await dispatch(createProduct(body)).unwrap();
+      if (editingProduct) {
+        await dispatch(updateProduct({ id: formProduct.id, body })).unwrap();
+        toast.success("Product updated successfully");
+      } else {
+        await dispatch(createProduct(body)).unwrap();
+        toast.success("Product created successfully");
+      }
       setEditingProduct(null);
       setFormProduct(emptyProduct);
       dispatch(fetchMembershipData());
     } catch (err) {
       console.error(err);
+      toast.error(err?.message || "Failed to save product");
     } finally {
       setSaving(false);
     }
@@ -157,8 +180,10 @@ export default function AdminAllMembership() {
       await dispatch(removeProduct(id)).unwrap();
       if (editingProduct === id) setEditingProduct(null);
       dispatch(fetchMembershipData());
+      toast.success("Product deleted");
     } catch (err) {
       console.error(err);
+      toast.error(err?.message || "Failed to delete product");
     }
   };
 

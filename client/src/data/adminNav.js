@@ -125,6 +125,7 @@ export const ADMIN_NAV = [
       { label: "Header", key: "header" },
       { label: "Footer", key: "footer" },
       { label: "Disclaimer", key: "disclaimer" },
+      { label: "Admin password", key: "admin-password" },
     ],
   },
 ];

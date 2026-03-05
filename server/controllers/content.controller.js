@@ -80,7 +80,12 @@ async function getSection(req, res, next) {
     }
     const section = await ContentSection.findOne({ pageSlug, sectionKey });
     if (!section) {
-      return res.status(404).json({ message: "Section not found" });
+      return res.json({
+        pageSlug,
+        sectionKey,
+        fields: [],
+        images: [],
+      });
     }
     return res.json(section);
   } catch (err) {

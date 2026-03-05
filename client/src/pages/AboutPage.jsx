@@ -6,7 +6,7 @@ import { fetchAbout } from "../store/slices/aboutSlice";
 import { selectAbout, selectAboutLoading, selectAboutError } from "../store/slices/aboutSlice";
 import { ABOUT_FALLBACK } from "../utils/fallbacks";
 
-/** Merge API about data with fallback so we always have safe defaults for rendering. */
+/** Merge API about data with fallback so DB data wins and we have safe defaults for missing keys. */
 function useAboutData() {
   const dispatch = useDispatch();
   const apiData = useSelector(selectAbout);
@@ -17,7 +17,7 @@ function useAboutData() {
     dispatch(fetchAbout());
   }, [dispatch]);
 
-  const about = apiData ?? ABOUT_FALLBACK;
+  const about = { ...ABOUT_FALLBACK, ...(apiData || {}) };
   const journey = about.journey?.length ? about.journey : [
     { year: "Early path", title: "Across cultures", text: "Growing up between worlds sparked a lifelong interest in identity, belonging, and the many ways we heal." },
     { year: "Training", title: "Integrative systems", text: "Formal training in shamanic energy medicine, Vitality Qigong, and life coaching." },
@@ -25,13 +25,13 @@ function useAboutData() {
   ];
   const testimonial = about.testimonial ?? { quote: "", attribution: "" };
 
-  return { about, journey, testimonial, loading, error };
+  return { about, journey, testimonial, loading, error, apiData };
 }
 
 export default function AboutPage() {
-  const { about, journey, testimonial, loading, error } = useAboutData();
+  const { about, journey, testimonial, loading, error, apiData } = useAboutData();
 
-  if (loading && !about?.name) {
+  if (loading && !apiData) {
     return (
       <main className="min-h-screen bg-page-bg flex items-center justify-center">
         <div className="text-reiki-muted">Loading…</div>

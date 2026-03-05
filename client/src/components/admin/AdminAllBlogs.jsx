@@ -5,6 +5,7 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import toast from "react-hot-toast";
 import {
   fetchBlogPosts,
   createPost,
@@ -89,15 +90,18 @@ export default function AdminAllBlogs() {
       if (editingSlug) {
         await dispatch(updatePost({ slug: editingSlug, body })).unwrap();
         await dispatch(fetchBlogPosts(false));
+        toast.success("Blog post updated successfully");
       } else {
         await dispatch(createPost(body)).unwrap();
         await dispatch(fetchBlogPosts(false));
+        toast.success("Blog post created successfully");
       }
       setEditingSlug(null);
       setAddingNew(false);
       setForm(emptyPost);
     } catch (err) {
       console.error(err);
+      toast.error(err?.message || "Failed to save blog post");
     } finally {
       setSaving(false);
     }
@@ -112,8 +116,10 @@ export default function AdminAllBlogs() {
         setAddingNew(false);
         setForm(emptyPost);
       }
+      toast.success("Blog post deleted");
     } catch (err) {
       console.error(err);
+      toast.error(err?.message || "Failed to delete blog post");
     }
   };
 

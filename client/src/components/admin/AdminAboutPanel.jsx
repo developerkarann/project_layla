@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { HiCloudArrowUp } from "react-icons/hi2";
+import toast from "react-hot-toast";
 import { getAbout, putAbout } from "../../api";
 import { ABOUT_FALLBACK } from "../../utils/fallbacks";
 
@@ -67,7 +68,9 @@ export default function AdminAboutPanel() {
         ctaButtonLabel: doc.ctaButtonLabel ?? "",
       });
     } catch (err) {
-      setLoadError(err?.message ?? "Failed to load");
+      const msg = err?.message ?? "Failed to load";
+      setLoadError(msg);
+      toast.error(msg);
       setData({
         name: ABOUT_FALLBACK.name ?? "",
         tagline: ABOUT_FALLBACK.tagline ?? "",
@@ -180,9 +183,11 @@ export default function AdminAboutPanel() {
       };
       await putAbout(body);
       setSaveStatus("success");
+      toast.success("About page saved successfully");
       setTimeout(() => setSaveStatus(null), 3000);
-    } catch {
+    } catch (err) {
       setSaveStatus("error");
+      toast.error(err?.message || "Failed to save About page");
     } finally {
       setSaving(false);
     }

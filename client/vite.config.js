@@ -10,6 +10,7 @@ export default defineConfig({
     // Dev only: proxy /api to backend. Production uses API_BASE in src/api/client.js.
     proxy: {
       "/api": { target: "https://project-layla-cghn.vercel.app", changeOrigin: true },
+      // "/api": { target: "http://localhost:5000", changeOrigin: true },
     },
   },
 })

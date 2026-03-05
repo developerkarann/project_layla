@@ -3,6 +3,7 @@
  */
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import toast from "react-hot-toast";
 import {
   fetchAllEvents,
   createEventItem,
@@ -70,14 +71,17 @@ export default function AdminEvents() {
       };
       if (editing) {
         await dispatch(updateEventItem({ id: form.id, body: payload })).unwrap();
+        toast.success("Event updated successfully");
       } else {
         await dispatch(createEventItem(payload)).unwrap();
+        toast.success("Event created successfully");
       }
       setEditing(null);
       setForm(emptyEvent);
       dispatch(fetchAllEvents());
     } catch (err) {
       console.error(err);
+      toast.error(err?.message || "Failed to save event");
     } finally {
       setSaving(false);
     }
@@ -88,8 +92,10 @@ export default function AdminEvents() {
     try {
       await dispatch(removeEvent(id)).unwrap();
       if (editing === id) setEditing(null);
+      toast.success("Event deleted");
     } catch (err) {
       console.error(err);
+      toast.error(err?.message || "Failed to delete event");
     }
   };
 

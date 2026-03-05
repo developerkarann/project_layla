@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const { requireAdminAuth } = require("../middleware/adminAuth");
 
 const contentRoutes = require("./content.routes");
 const servicesRoutes = require("./services.routes");
@@ -10,7 +11,12 @@ const contactRoutes = require("./contact.routes");
 const settingsRoutes = require("./settings.routes");
 const eventsRoutes = require("./events.routes");
 const membershipRoutes = require("./membership.routes");
+const adminRoutes = require("./admin.routes");
 
+// All non-GET requests (except admin login/verify) require valid admin token
+router.use(requireAdminAuth);
+
+router.use("/admin", adminRoutes);
 router.use("/content", contentRoutes);
 router.use("/services", servicesRoutes);
 router.use("/blog", blogRoutes);

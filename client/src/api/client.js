@@ -1,11 +1,22 @@
+import { getAdminToken } from "../utils/adminAuth";
+
 /**
  * API client base. All requests go through this so we can change base URL and error handling in one place.
- * In dev, Vite proxies /api to the backend. In production we always call the backend URL so it works on Vercel.
+ * - Dev: empty string so Vite proxy forwards /api to backend (see vite.config.js).
+ * - Production: use VITE_API_URL if set (e.g. separate API server); otherwise "" so fetch("/api/...") is same-origin (API and app on same host).
  */
-const PRODUCTION_API_URL = "https://project-layla-cghn.vercel.app";
 const API_BASE =
-  import.meta.env.VITE_API_URL ??
-  (import.meta.env.PROD ? PRODUCTION_API_URL : "");
+  import.meta.env.VITE_API_URL != null && import.meta.env.VITE_API_URL !== ""
+    ? import.meta.env.VITE_API_URL.replace(/\/$/, "")
+    : "";
+
+function getHeaders(includeBody = false) {
+  const headers = {};
+  if (includeBody) headers["Content-Type"] = "application/json";
+  const token = getAdminToken();
+  if (token) headers["Authorization"] = `Bearer ${token}`;
+  return headers;
+}
 
 /**
  * Performs a GET request and returns JSON. Returns null on 404.
@@ -13,7 +24,7 @@ const API_BASE =
  * @returns {Promise<object|null>}
  */
 export async function apiGet(path) {
-  const res = await fetch(`${API_BASE}/api/${path}`);
+  const res = await fetch(`${API_BASE}/api/${path}`, { headers: getHeaders() });
   if (res.status === 404) return null;
   if (!res.ok) throw new Error(await res.text() || `HTTP ${res.status}`);
   return res.json();
@@ -28,7 +39,7 @@ export async function apiGet(path) {
 export async function apiPut(path, body) {
   const res = await fetch(`${API_BASE}/api/${path}`, {
     method: "PUT",
-    headers: { "Content-Type": "application/json" },
+    headers: getHeaders(true),
     body: JSON.stringify(body),
   });
   if (!res.ok) throw new Error(await res.text() || `HTTP ${res.status}`);
@@ -44,7 +55,7 @@ export async function apiPut(path, body) {
 export async function apiPost(path, body) {
   const res = await fetch(`${API_BASE}/api/${path}`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: getHeaders(true),
     body: JSON.stringify(body),
   });
   if (!res.ok) throw new Error(await res.text() || `HTTP ${res.status}`);
@@ -56,7 +67,10 @@ export async function apiPost(path, body) {
  * @param {string} path
  */
 export async function apiDelete(path) {
-  const res = await fetch(`${API_BASE}/api/${path}`, { method: "DELETE" });
+  const res = await fetch(`${API_BASE}/api/${path}`, {
+    method: "DELETE",
+    headers: getHeaders(),
+  });
   if (res.status === 204) return;
   if (!res.ok) throw new Error(await res.text() || `HTTP ${res.status}`);
   return res.json();
