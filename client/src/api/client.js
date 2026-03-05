@@ -3,12 +3,14 @@ import { getAdminToken } from "../utils/adminAuth";
 /**
  * API client base. All requests go through this so we can change base URL and error handling in one place.
  * - Dev: empty string so Vite proxy forwards /api to backend (see vite.config.js).
- * - Production: use VITE_API_URL if set (e.g. separate API server); otherwise "" so fetch("/api/...") is same-origin (API and app on same host).
+ * - Production: use VITE_API_URL if set (e.g. separate API server); otherwise fall back to the deployed backend URL.
  */
 const API_BASE =
   import.meta.env.VITE_API_URL != null && import.meta.env.VITE_API_URL !== ""
     ? import.meta.env.VITE_API_URL.replace(/\/$/, "")
-    : "";
+    : import.meta.env.DEV
+    ? ""
+    : "https://project-layla-cghn.vercel.app";
 
 function getHeaders(includeBody = false) {
   const headers = {};
