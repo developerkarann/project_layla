@@ -11,6 +11,9 @@ import AboutPage from "./pages/AboutPage";
 import AvailabilityPage from "./pages/AvailabilityPage";
 import EventsPage from "./pages/EventsPage";
 import MembershipPage from "./pages/MembershipPage";
+import LoginPage from "./pages/LoginPage";
+import SignupPage from "./pages/SignupPage";
+import UserDashboardPage from "./pages/UserDashboardPage";
 import AdminGate from "./pages/admin/AdminGate";
 
 function App() {
@@ -34,6 +37,9 @@ function App() {
                 <Route path="/availability" element={<AvailabilityPage />} />
                 <Route path="/events" element={<EventsPage />} />
                 <Route path="/membership" element={<MembershipPage />} />
+                <Route path="/login" element={<LoginPage />} />
+                <Route path="/signup" element={<SignupPage />} />
+                <Route path="/user/admin" element={<UserDashboardPage />} />
               </Routes>
               <Footer />
             </>

@@ -3,10 +3,24 @@ import LotusSectionIcon from "../LotusSectionIcon";
 
 export default function HolisticHealingIntro() {
   const { fields } = useContent("home", "holistic-healing-intro");
-  const title = getFieldValue(fields, "title") || "Holistic healing for empowered living";
-  const body = getFieldValue(fields, "body") || "Create the life you want to live.";
-  const lastWord = title.split(" ").pop();
-  const titleStart = title.split(" ").slice(0, -1).join(" ");
+  const title =
+    getFieldValue(fields, "title") || "Holistic healing for empowered living";
+  const introLine =
+    getFieldValue(fields, "body") || "Create the life you want to live !";
+  const missionText = getFieldValue(fields, "missionParagraph");
+  const approachText = getFieldValue(fields, "approachParagraph");
+
+  const words = title.split(" ");
+  const healingIndex = words.findIndex((w) =>
+    w.toLowerCase().includes("healing")
+  );
+
+  const firstLineWords =
+    healingIndex >= 0 ? words.slice(0, healingIndex + 2) : words;
+  const secondLineWords =
+    healingIndex >= 0 ? words.slice(healingIndex + 2) : [];
+  const healingWord =
+    healingIndex >= 0 ? words[healingIndex] : null;
 
   return (
     <section
@@ -18,21 +32,43 @@ export default function HolisticHealingIntro() {
         <div className="text-center lg:text-left font-sans flex flex-col items-center lg:items-start">
           <h2 className="leading-tight font-garamond">
             <span className="block text-2xl font-normal sm:text-2xl md:text-3xl lg:text-5xl xl:text-6xl mb-2 sm:mb-3">
-              {titleStart}{" "}
-              {lastWord ? <span className="text-reiki-olive">{lastWord}</span> : null}
+              {firstLineWords.map((w, i) =>
+                healingWord && w === healingWord ? (
+                  <span key={i} className="text-reiki-olive">
+                    {w}{" "}
+                  </span>
+                ) : (
+                  `${w} `
+                )
+              )}
             </span>
+            {secondLineWords.length > 0 && (
+              <span className="block text-2xl font-normal sm:text-2xl md:text-3xl lg:text-5xl xl:text-6xl mb-2 sm:mb-3">
+                {secondLineWords.join(" ")}
+              </span>
+            )}
           </h2>
           <p className="font-lato text-sm leading-relaxed text-reiki-body sm:text-base md:text-lg mt-4 xl:text-2xl md:mt-5">
-            {body}
+            {introLine}
           </p>
-          <a href="/about" className="relative mt-6 sm:mt-8 inline-block rounded px-6 py-2.5 sm:px-8 sm:py-3 font-sans text-sm sm:text-base font-semibold text-white transition hover:opacity-90 bg-reiki-dark">
+          <a
+            href="/about"
+            className="relative mt-6 sm:mt-8 inline-block rounded px-6 py-2.5 sm:px-8 sm:py-3 font-sans text-sm sm:text-base font-semibold text-white transition hover:opacity-90 bg-reiki-dark"
+          >
             Learn more
           </a>
         </div>
         <div className="max-w-xl lg:max-w-none">
-          <p className="text-left font-lato text-sm leading-relaxed text-reiki-body sm:text-base md:text-lg mb-3 sm:mb-4">
-            {body}
-          </p>
+          {missionText ? (
+            <p className="text-left font-lato text-sm leading-relaxed text-reiki-body sm:text-base md:text-lg mb-3 sm:mb-4">
+              {missionText}
+            </p>
+          ) : null}
+          {approachText ? (
+            <p className="text-left font-lato text-sm leading-relaxed text-reiki-body sm:text-base md:text-lg mb-3 sm:mb-4">
+              {approachText}
+            </p>
+          ) : null}
         </div>
       </div>
     </section>

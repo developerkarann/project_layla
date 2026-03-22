@@ -22,6 +22,7 @@ import {
   selectMembershipProducts,
   selectMembershipLoading,
 } from "../../store/slices/membershipSlice";
+import AdminModal from "./AdminModal";
 
 const emptyTier = { id: "", name: "", price: "", period: "month", tagline: "", description: "", features: "", cta: "Join", highlighted: false };
 const emptyHealing = { id: "", title: "", type: "Content", description: "" };
@@ -42,6 +43,9 @@ export default function AdminAllMembership() {
   const [formHealing, setFormHealing] = useState(emptyHealing);
   const [formProduct, setFormProduct] = useState(emptyProduct);
   const [saving, setSaving] = useState(false);
+  const tierModalOpen = editingTier != null || Boolean(formTier.id);
+  const healingModalOpen = editingHealing != null || Boolean(formHealing.id);
+  const productModalOpen = editingProduct != null || Boolean(formProduct.id);
 
   useEffect(() => {
     dispatch(fetchMembershipData());
@@ -234,53 +238,55 @@ export default function AdminAllMembership() {
                   </ul>
                 )}
               </section>
-              {(editingTier || formTier.id) && (
-                <section className="rounded-2xl border border-reiki-card-border bg-white p-6">
-                  <h3 className="text-lg font-semibold text-reiki-dark mb-4">{editingTier ? "Edit tier" : "New tier"}</h3>
-                  <form onSubmit={handleSaveTier} className="space-y-4">
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-sm font-medium text-reiki-dark mb-1">Name *</label>
-                        <input type="text" required value={formTier.name} onChange={(e) => setFormTier((f) => ({ ...f, name: e.target.value }))} className="w-full rounded-lg border border-reiki-card-border px-3 py-2" />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-reiki-dark mb-1">Price *</label>
-                        <input type="number" required value={formTier.price} onChange={(e) => setFormTier((f) => ({ ...f, price: e.target.value }))} className="w-full rounded-lg border border-reiki-card-border px-3 py-2" />
-                      </div>
+              <AdminModal
+                open={tierModalOpen}
+                title={editingTier ? "Edit tier" : "New tier"}
+                onClose={() => { setEditingTier(null); setFormTier(emptyTier); }}
+                maxWidthClass="max-w-2xl"
+              >
+                <form onSubmit={handleSaveTier} className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-reiki-dark mb-1">Name *</label>
+                      <input type="text" required value={formTier.name} onChange={(e) => setFormTier((f) => ({ ...f, name: e.target.value }))} className="w-full rounded-lg border border-reiki-card-border px-3 py-2" />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-reiki-dark mb-1">Period</label>
-                      <input type="text" value={formTier.period} onChange={(e) => setFormTier((f) => ({ ...f, period: e.target.value }))} placeholder="month" className="w-full rounded-lg border border-reiki-card-border px-3 py-2" />
+                      <label className="block text-sm font-medium text-reiki-dark mb-1">Price *</label>
+                      <input type="number" required value={formTier.price} onChange={(e) => setFormTier((f) => ({ ...f, price: e.target.value }))} className="w-full rounded-lg border border-reiki-card-border px-3 py-2" />
                     </div>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-reiki-dark mb-1">Period</label>
+                    <input type="text" value={formTier.period} onChange={(e) => setFormTier((f) => ({ ...f, period: e.target.value }))} placeholder="month" className="w-full rounded-lg border border-reiki-card-border px-3 py-2" />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-reiki-dark mb-1">Tagline</label>
+                    <input type="text" value={formTier.tagline} onChange={(e) => setFormTier((f) => ({ ...f, tagline: e.target.value }))} className="w-full rounded-lg border border-reiki-card-border px-3 py-2" />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-reiki-dark mb-1">Description</label>
+                    <textarea value={formTier.description} onChange={(e) => setFormTier((f) => ({ ...f, description: e.target.value }))} rows={2} className="w-full rounded-lg border border-reiki-card-border px-3 py-2" />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-reiki-dark mb-1">Features (one per line)</label>
+                    <textarea value={formTier.features} onChange={(e) => setFormTier((f) => ({ ...f, features: e.target.value }))} rows={4} className="w-full rounded-lg border border-reiki-card-border px-3 py-2" />
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <label className="flex items-center gap-2">
+                      <input type="checkbox" checked={formTier.highlighted} onChange={(e) => setFormTier((f) => ({ ...f, highlighted: e.target.checked }))} className="rounded border-reiki-card-border" />
+                      <span className="text-sm text-reiki-dark">Highlighted (Most popular)</span>
+                    </label>
                     <div>
-                      <label className="block text-sm font-medium text-reiki-dark mb-1">Tagline</label>
-                      <input type="text" value={formTier.tagline} onChange={(e) => setFormTier((f) => ({ ...f, tagline: e.target.value }))} className="w-full rounded-lg border border-reiki-card-border px-3 py-2" />
+                      <label className="block text-sm font-medium text-reiki-dark mb-1">CTA</label>
+                      <input type="text" value={formTier.cta} onChange={(e) => setFormTier((f) => ({ ...f, cta: e.target.value }))} className="w-32 rounded-lg border border-reiki-card-border px-3 py-2" />
                     </div>
-                    <div>
-                      <label className="block text-sm font-medium text-reiki-dark mb-1">Description</label>
-                      <textarea value={formTier.description} onChange={(e) => setFormTier((f) => ({ ...f, description: e.target.value }))} rows={2} className="w-full rounded-lg border border-reiki-card-border px-3 py-2" />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-reiki-dark mb-1">Features (one per line)</label>
-                      <textarea value={formTier.features} onChange={(e) => setFormTier((f) => ({ ...f, features: e.target.value }))} rows={4} className="w-full rounded-lg border border-reiki-card-border px-3 py-2" />
-                    </div>
-                    <div className="flex items-center gap-4">
-                      <label className="flex items-center gap-2">
-                        <input type="checkbox" checked={formTier.highlighted} onChange={(e) => setFormTier((f) => ({ ...f, highlighted: e.target.checked }))} className="rounded border-reiki-card-border" />
-                        <span className="text-sm text-reiki-dark">Highlighted (Most popular)</span>
-                      </label>
-                      <div>
-                        <label className="block text-sm font-medium text-reiki-dark mb-1">CTA</label>
-                        <input type="text" value={formTier.cta} onChange={(e) => setFormTier((f) => ({ ...f, cta: e.target.value }))} className="w-32 rounded-lg border border-reiki-card-border px-3 py-2" />
-                      </div>
-                    </div>
-                    <div className="flex gap-2">
-                      <button type="submit" disabled={saving} className="rounded-xl bg-reiki-olive px-4 py-2 text-sm font-semibold text-white hover:opacity-90 disabled:opacity-50">{saving ? "Saving…" : "Save"}</button>
-                      <button type="button" onClick={() => { setEditingTier(null); setFormTier(emptyTier); }} className="rounded-xl border border-reiki-card-border px-4 py-2 text-sm text-reiki-muted hover:bg-reiki-section">Cancel</button>
-                    </div>
-                  </form>
-                </section>
-              )}
+                  </div>
+                  <div className="flex gap-2">
+                    <button type="submit" disabled={saving} className="rounded-xl bg-reiki-olive px-4 py-2 text-sm font-semibold text-white hover:opacity-90 disabled:opacity-50">{saving ? "Saving…" : "Save"}</button>
+                    <button type="button" onClick={() => { setEditingTier(null); setFormTier(emptyTier); }} className="rounded-xl border border-reiki-card-border px-4 py-2 text-sm text-reiki-muted hover:bg-reiki-section">Cancel</button>
+                  </div>
+                </form>
+              </AdminModal>
             </>
           )}
 
@@ -306,29 +312,31 @@ export default function AdminAllMembership() {
                   </ul>
                 )}
               </section>
-              {(editingHealing || formHealing.id) && (
-                <section className="rounded-2xl border border-reiki-card-border bg-white p-6">
-                  <h3 className="text-lg font-semibold text-reiki-dark mb-4">{editingHealing ? "Edit item" : "New item"}</h3>
-                  <form onSubmit={handleSaveHealing} className="space-y-4">
-                    <div>
-                      <label className="block text-sm font-medium text-reiki-dark mb-1">Title *</label>
-                      <input type="text" required value={formHealing.title} onChange={(e) => setFormHealing((f) => ({ ...f, title: e.target.value }))} className="w-full rounded-lg border border-reiki-card-border px-3 py-2" />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-reiki-dark mb-1">Type</label>
-                      <input type="text" value={formHealing.type} onChange={(e) => setFormHealing((f) => ({ ...f, type: e.target.value }))} placeholder="Content" className="w-full rounded-lg border border-reiki-card-border px-3 py-2" />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-reiki-dark mb-1">Description</label>
-                      <textarea value={formHealing.description} onChange={(e) => setFormHealing((f) => ({ ...f, description: e.target.value }))} rows={3} className="w-full rounded-lg border border-reiki-card-border px-3 py-2" />
-                    </div>
-                    <div className="flex gap-2">
-                      <button type="submit" disabled={saving} className="rounded-xl bg-reiki-olive px-4 py-2 text-sm font-semibold text-white hover:opacity-90 disabled:opacity-50">{saving ? "Saving…" : "Save"}</button>
-                      <button type="button" onClick={() => { setEditingHealing(null); setFormHealing(emptyHealing); }} className="rounded-xl border border-reiki-card-border px-4 py-2 text-sm text-reiki-muted hover:bg-reiki-section">Cancel</button>
-                    </div>
-                  </form>
-                </section>
-              )}
+              <AdminModal
+                open={healingModalOpen}
+                title={editingHealing ? "Edit item" : "New item"}
+                onClose={() => { setEditingHealing(null); setFormHealing(emptyHealing); }}
+                maxWidthClass="max-w-2xl"
+              >
+                <form onSubmit={handleSaveHealing} className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-reiki-dark mb-1">Title *</label>
+                    <input type="text" required value={formHealing.title} onChange={(e) => setFormHealing((f) => ({ ...f, title: e.target.value }))} className="w-full rounded-lg border border-reiki-card-border px-3 py-2" />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-reiki-dark mb-1">Type</label>
+                    <input type="text" value={formHealing.type} onChange={(e) => setFormHealing((f) => ({ ...f, type: e.target.value }))} placeholder="Content" className="w-full rounded-lg border border-reiki-card-border px-3 py-2" />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-reiki-dark mb-1">Description</label>
+                    <textarea value={formHealing.description} onChange={(e) => setFormHealing((f) => ({ ...f, description: e.target.value }))} rows={3} className="w-full rounded-lg border border-reiki-card-border px-3 py-2" />
+                  </div>
+                  <div className="flex gap-2">
+                    <button type="submit" disabled={saving} className="rounded-xl bg-reiki-olive px-4 py-2 text-sm font-semibold text-white hover:opacity-90 disabled:opacity-50">{saving ? "Saving…" : "Save"}</button>
+                    <button type="button" onClick={() => { setEditingHealing(null); setFormHealing(emptyHealing); }} className="rounded-xl border border-reiki-card-border px-4 py-2 text-sm text-reiki-muted hover:bg-reiki-section">Cancel</button>
+                  </div>
+                </form>
+              </AdminModal>
             </>
           )}
 
@@ -354,33 +362,35 @@ export default function AdminAllMembership() {
                   </ul>
                 )}
               </section>
-              {(editingProduct || formProduct.id) && (
-                <section className="rounded-2xl border border-reiki-card-border bg-white p-6">
-                  <h3 className="text-lg font-semibold text-reiki-dark mb-4">{editingProduct ? "Edit product" : "New product"}</h3>
-                  <form onSubmit={handleSaveProduct} className="space-y-4">
-                    <div>
-                      <label className="block text-sm font-medium text-reiki-dark mb-1">Title *</label>
-                      <input type="text" required value={formProduct.title} onChange={(e) => setFormProduct((f) => ({ ...f, title: e.target.value }))} className="w-full rounded-lg border border-reiki-card-border px-3 py-2" />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-reiki-dark mb-1">Type</label>
-                      <input type="text" value={formProduct.type} onChange={(e) => setFormProduct((f) => ({ ...f, type: e.target.value }))} placeholder="Product" className="w-full rounded-lg border border-reiki-card-border px-3 py-2" />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-reiki-dark mb-1">Description</label>
-                      <textarea value={formProduct.description} onChange={(e) => setFormProduct((f) => ({ ...f, description: e.target.value }))} rows={2} className="w-full rounded-lg border border-reiki-card-border px-3 py-2" />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-reiki-dark mb-1">Price label</label>
-                      <input type="text" value={formProduct.priceLabel} onChange={(e) => setFormProduct((f) => ({ ...f, priceLabel: e.target.value }))} placeholder="e.g. From $29" className="w-full rounded-lg border border-reiki-card-border px-3 py-2" />
-                    </div>
-                    <div className="flex gap-2">
-                      <button type="submit" disabled={saving} className="rounded-xl bg-reiki-olive px-4 py-2 text-sm font-semibold text-white hover:opacity-90 disabled:opacity-50">{saving ? "Saving…" : "Save"}</button>
-                      <button type="button" onClick={() => { setEditingProduct(null); setFormProduct(emptyProduct); }} className="rounded-xl border border-reiki-card-border px-4 py-2 text-sm text-reiki-muted hover:bg-reiki-section">Cancel</button>
-                    </div>
-                  </form>
-                </section>
-              )}
+              <AdminModal
+                open={productModalOpen}
+                title={editingProduct ? "Edit product" : "New product"}
+                onClose={() => { setEditingProduct(null); setFormProduct(emptyProduct); }}
+                maxWidthClass="max-w-2xl"
+              >
+                <form onSubmit={handleSaveProduct} className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-reiki-dark mb-1">Title *</label>
+                    <input type="text" required value={formProduct.title} onChange={(e) => setFormProduct((f) => ({ ...f, title: e.target.value }))} className="w-full rounded-lg border border-reiki-card-border px-3 py-2" />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-reiki-dark mb-1">Type</label>
+                    <input type="text" value={formProduct.type} onChange={(e) => setFormProduct((f) => ({ ...f, type: e.target.value }))} placeholder="Product" className="w-full rounded-lg border border-reiki-card-border px-3 py-2" />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-reiki-dark mb-1">Description</label>
+                    <textarea value={formProduct.description} onChange={(e) => setFormProduct((f) => ({ ...f, description: e.target.value }))} rows={2} className="w-full rounded-lg border border-reiki-card-border px-3 py-2" />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-reiki-dark mb-1">Price label</label>
+                    <input type="text" value={formProduct.priceLabel} onChange={(e) => setFormProduct((f) => ({ ...f, priceLabel: e.target.value }))} placeholder="e.g. From $29" className="w-full rounded-lg border border-reiki-card-border px-3 py-2" />
+                  </div>
+                  <div className="flex gap-2">
+                    <button type="submit" disabled={saving} className="rounded-xl bg-reiki-olive px-4 py-2 text-sm font-semibold text-white hover:opacity-90 disabled:opacity-50">{saving ? "Saving…" : "Save"}</button>
+                    <button type="button" onClick={() => { setEditingProduct(null); setFormProduct(emptyProduct); }} className="rounded-xl border border-reiki-card-border px-4 py-2 text-sm text-reiki-muted hover:bg-reiki-section">Cancel</button>
+                  </div>
+                </form>
+              </AdminModal>
             </>
           )}
         </div>

@@ -13,6 +13,7 @@ import {
   removePost,
 } from "../../store/slices/blogSlice";
 import { selectBlogPosts, selectBlogLoading } from "../../store/slices/blogSlice";
+import AdminModal from "./AdminModal";
 
 function formatPostDate(publishedAt) {
   if (!publishedAt) return "";
@@ -196,125 +197,125 @@ export default function AdminAllBlogs() {
             )}
           </section>
 
-          {showForm && (
-            <section className="rounded-3xl border border-reiki-card-border bg-white p-6 shadow-sm">
-              <h2 className="text-lg font-semibold text-reiki-dark mb-4">
-                {editingSlug ? "Edit blog post" : "New blog post"}
-              </h2>
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-reiki-dark mb-1">Slug *</label>
-                    <input
-                      type="text"
-                      required
-                      value={form.slug}
-                      onChange={(e) => setForm((f) => ({ ...f, slug: e.target.value }))}
-                      placeholder="my-post-slug"
-                      className="w-full rounded-lg border border-reiki-card-border px-3 py-2"
-                      readOnly={!!editingSlug}
-                    />
-                    {editingSlug && <p className="mt-1 text-xs text-reiki-muted">Slug cannot be changed when editing.</p>}
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-reiki-dark mb-1">Title *</label>
-                    <input
-                      type="text"
-                      required
-                      value={form.title}
-                      onChange={(e) => setForm((f) => ({ ...f, title: e.target.value }))}
-                      className="w-full rounded-lg border border-reiki-card-border px-3 py-2"
-                    />
-                  </div>
-                </div>
+          <AdminModal
+            open={showForm}
+            title={editingSlug ? "Edit blog post" : "New blog post"}
+            onClose={() => { setEditingSlug(null); setAddingNew(false); setForm(emptyPost); }}
+            maxWidthClass="max-w-4xl"
+          >
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-reiki-dark mb-1">Excerpt</label>
-                  <textarea
-                    value={form.excerpt}
-                    onChange={(e) => setForm((f) => ({ ...f, excerpt: e.target.value }))}
-                    rows={2}
-                    className="w-full rounded-lg border border-reiki-card-border px-3 py-2"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-reiki-dark mb-1">Image URL</label>
+                  <label className="block text-sm font-medium text-reiki-dark mb-1">Slug *</label>
                   <input
                     type="text"
-                    value={form.image}
-                    onChange={(e) => setForm((f) => ({ ...f, image: e.target.value }))}
-                    placeholder="/yoga.JPG"
+                    required
+                    value={form.slug}
+                    onChange={(e) => setForm((f) => ({ ...f, slug: e.target.value }))}
+                    placeholder="my-post-slug"
+                    className="w-full rounded-lg border border-reiki-card-border px-3 py-2"
+                    readOnly={!!editingSlug}
+                  />
+                  {editingSlug && <p className="mt-1 text-xs text-reiki-muted">Slug cannot be changed when editing.</p>}
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-reiki-dark mb-1">Title *</label>
+                  <input
+                    type="text"
+                    required
+                    value={form.title}
+                    onChange={(e) => setForm((f) => ({ ...f, title: e.target.value }))}
                     className="w-full rounded-lg border border-reiki-card-border px-3 py-2"
                   />
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-reiki-dark mb-1">Published date *</label>
-                    <input
-                      type="date"
-                      required
-                      value={form.publishedAt}
-                      onChange={(e) => setForm((f) => ({ ...f, publishedAt: e.target.value }))}
-                      className="w-full rounded-lg border border-reiki-card-border px-3 py-2"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-reiki-dark mb-1">Author</label>
-                    <input
-                      type="text"
-                      value={form.author}
-                      onChange={(e) => setForm((f) => ({ ...f, author: e.target.value }))}
-                      className="w-full rounded-lg border border-reiki-card-border px-3 py-2"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-reiki-dark mb-1">Category</label>
-                    <input
-                      type="text"
-                      value={form.category}
-                      onChange={(e) => setForm((f) => ({ ...f, category: e.target.value }))}
-                      placeholder="Mindfulness"
-                      className="w-full rounded-lg border border-reiki-card-border px-3 py-2"
-                    />
-                  </div>
-                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-reiki-dark mb-1">Excerpt</label>
+                <textarea
+                  value={form.excerpt}
+                  onChange={(e) => setForm((f) => ({ ...f, excerpt: e.target.value }))}
+                  rows={2}
+                  className="w-full rounded-lg border border-reiki-card-border px-3 py-2"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-reiki-dark mb-1">Image URL</label>
+                <input
+                  type="text"
+                  value={form.image}
+                  onChange={(e) => setForm((f) => ({ ...f, image: e.target.value }))}
+                  placeholder="/yoga.JPG"
+                  className="w-full rounded-lg border border-reiki-card-border px-3 py-2"
+                />
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-reiki-dark mb-1">Body (one paragraph per line) *</label>
-                  <textarea
-                    value={form.body}
-                    onChange={(e) => setForm((f) => ({ ...f, body: e.target.value }))}
-                    rows={12}
-                    placeholder="First paragraph...&#10;Second paragraph...&#10;Third paragraph..."
-                    className="w-full rounded-lg border border-reiki-card-border px-3 py-2 font-mono text-sm"
+                  <label className="block text-sm font-medium text-reiki-dark mb-1">Published date *</label>
+                  <input
+                    type="date"
+                    required
+                    value={form.publishedAt}
+                    onChange={(e) => setForm((f) => ({ ...f, publishedAt: e.target.value }))}
+                    className="w-full rounded-lg border border-reiki-card-border px-3 py-2"
                   />
                 </div>
-                <div className="flex items-center gap-4">
-                  <label className="flex items-center gap-2">
-                    <input
-                      type="checkbox"
-                      checked={form.isPublished}
-                      onChange={(e) => setForm((f) => ({ ...f, isPublished: e.target.checked }))}
-                      className="rounded border-reiki-card-border"
-                    />
-                    <span className="text-sm text-reiki-dark">Published</span>
-                  </label>
-                  <button
-                    type="submit"
-                    disabled={saving}
-                    className="rounded-xl bg-reiki-olive px-4 py-2 text-sm font-semibold text-white hover:opacity-90 disabled:opacity-50"
-                  >
-                    {saving ? "Saving…" : editingSlug ? "Update post" : "Create post"}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => { setEditingSlug(null); setAddingNew(false); setForm(emptyPost); }}
-                    className="text-sm text-reiki-muted hover:text-reiki-dark"
-                  >
-                    Cancel
-                  </button>
+                <div>
+                  <label className="block text-sm font-medium text-reiki-dark mb-1">Author</label>
+                  <input
+                    type="text"
+                    value={form.author}
+                    onChange={(e) => setForm((f) => ({ ...f, author: e.target.value }))}
+                    className="w-full rounded-lg border border-reiki-card-border px-3 py-2"
+                  />
                 </div>
-              </form>
-            </section>
-          )}
+                <div>
+                  <label className="block text-sm font-medium text-reiki-dark mb-1">Category</label>
+                  <input
+                    type="text"
+                    value={form.category}
+                    onChange={(e) => setForm((f) => ({ ...f, category: e.target.value }))}
+                    placeholder="Mindfulness"
+                    className="w-full rounded-lg border border-reiki-card-border px-3 py-2"
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-reiki-dark mb-1">Body (one paragraph per line) *</label>
+                <textarea
+                  value={form.body}
+                  onChange={(e) => setForm((f) => ({ ...f, body: e.target.value }))}
+                  rows={12}
+                  placeholder="First paragraph...&#10;Second paragraph...&#10;Third paragraph..."
+                  className="w-full rounded-lg border border-reiki-card-border px-3 py-2 font-mono text-sm"
+                />
+              </div>
+              <div className="flex items-center gap-4">
+                <label className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    checked={form.isPublished}
+                    onChange={(e) => setForm((f) => ({ ...f, isPublished: e.target.checked }))}
+                    className="rounded border-reiki-card-border"
+                  />
+                  <span className="text-sm text-reiki-dark">Published</span>
+                </label>
+                <button
+                  type="submit"
+                  disabled={saving}
+                  className="rounded-xl bg-reiki-olive px-4 py-2 text-sm font-semibold text-white hover:opacity-90 disabled:opacity-50"
+                >
+                  {saving ? "Saving…" : editingSlug ? "Update post" : "Create post"}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => { setEditingSlug(null); setAddingNew(false); setForm(emptyPost); }}
+                  className="text-sm text-reiki-muted hover:text-reiki-dark"
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </AdminModal>
         </div>
       </div>
     </div>

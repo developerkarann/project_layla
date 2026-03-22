@@ -3,6 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchSettings } from "../../store/slices/settingsSlice";
 import { selectSettings } from "../../store/slices/settingsSlice";
+import { isUserLoggedIn } from "../../utils/userAuth";
 
 const NAV_LINKS = [
   { label: "HOME", to: "/" },
@@ -26,6 +27,7 @@ export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
   const pathname = location.pathname;
+  const loggedIn = isUserLoggedIn();
 
   useEffect(() => {
     dispatch(fetchSettings());
@@ -40,13 +42,32 @@ export default function Header() {
     if (to === "/services") return pathname === "/services";
     if (to === "/events") return pathname === "/events";
     if (to === "/membership") return pathname === "/membership";
+    if (to === "/login") return pathname === "/login";
+    if (to === "/signup") return pathname === "/signup";
+    if (to === "/user/admin") return pathname === "/user/admin";
     return false;
   };
 
   return (
     <header className="top-0 z-50 w-full border-b border-l border-reiki-accent/60 bg-reiki-bg-stripe">
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-2 sm:gap-4 px-4 py-3 md:px-6">
-        <div className="flex items-center gap-4" />
+        <div className="flex items-center gap-2">
+          {loggedIn ? (
+            <Link
+              to="/user/admin"
+              className={`rounded border border-reiki-dark/20 px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-reiki-dark transition hover:bg-reiki-dark hover:text-white sm:px-4 sm:py-2 sm:text-sm ${isActive("/user/admin") ? "bg-reiki-dark text-white" : ""}`}
+            >
+              My Account
+            </Link>
+          ) : (
+            <Link
+              to="/login"
+              className={`rounded border border-reiki-dark/20 px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-reiki-dark transition hover:bg-reiki-dark hover:text-white sm:px-4 sm:py-2 sm:text-sm ${isActive("/login") || isActive("/signup") ? "bg-reiki-dark text-white" : ""}`}
+            >
+              Login
+            </Link>
+          )}
+        </div>
 
         <Link
           to="/"
@@ -100,6 +121,27 @@ export default function Header() {
       {mobileMenuOpen && (
         <div className="border-t border-reiki-accent/40 bg-reiki-bg-stripe px-4 py-4 md:hidden">
           <ul className="flex flex-col gap-3">
+            {loggedIn ? (
+              <li>
+                <Link
+                  to="/user/admin"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={`block py-1 text-sm font-medium uppercase text-reiki-dark ${isActive("/user/admin") ? "font-semibold" : ""}`}
+                >
+                  My Account
+                </Link>
+              </li>
+            ) : (
+              <li>
+                <Link
+                  to="/login"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={`block py-1 text-sm font-medium uppercase text-reiki-dark ${isActive("/login") || isActive("/signup") ? "font-semibold" : ""}`}
+                >
+                  Login
+                </Link>
+              </li>
+            )}
             {NAV_LINKS.map(({ label, to }) => (
               <li key={to}>
                 <Link

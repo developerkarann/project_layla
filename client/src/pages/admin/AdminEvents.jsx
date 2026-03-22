@@ -12,6 +12,7 @@ import {
 } from "../../store/slices/eventsSlice";
 import { selectUpcomingEvents, selectPastEvents, selectEventsLoading } from "../../store/slices/eventsSlice";
 import { formatEventDate } from "../../utils/fallbacks";
+import AdminModal from "../../components/admin/AdminModal";
 
 const emptyEvent = {
   id: "",
@@ -35,6 +36,7 @@ export default function AdminEvents() {
   const [editing, setEditing] = useState(null);
   const [form, setForm] = useState(emptyEvent);
   const [saving, setSaving] = useState(false);
+  const formOpen = editing != null || Boolean(form.id);
 
   useEffect(() => {
     dispatch(fetchAllEvents());
@@ -173,69 +175,69 @@ export default function AdminEvents() {
             )}
           </section>
 
-          {/* Form */}
-          {(editing || form.id) && (
-            <section className="rounded-3xl border border-reiki-card-border bg-white p-6 shadow-sm">
-              <h2 className="text-lg font-semibold text-reiki-dark mb-4">{editing ? "Edit event" : "New event"}</h2>
-              <form onSubmit={handleSubmit} className="space-y-4">
+          <AdminModal
+            open={formOpen}
+            title={editing ? "Edit event" : "New event"}
+            onClose={() => { setEditing(null); setForm(emptyEvent); }}
+          >
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-reiki-dark mb-1">Title *</label>
+                <input type="text" required value={form.title} onChange={(e) => setForm((f) => ({ ...f, title: e.target.value }))} className="w-full rounded-lg border border-reiki-card-border px-3 py-2" />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-reiki-dark mb-1">Title *</label>
-                  <input type="text" required value={form.title} onChange={(e) => setForm((f) => ({ ...f, title: e.target.value }))} className="w-full rounded-lg border border-reiki-card-border px-3 py-2" />
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-reiki-dark mb-1">Date *</label>
-                    <input type="date" required value={form.date} onChange={(e) => setForm((f) => ({ ...f, date: e.target.value }))} className="w-full rounded-lg border border-reiki-card-border px-3 py-2" />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-reiki-dark mb-1">Time</label>
-                    <input type="text" value={form.time} onChange={(e) => setForm((f) => ({ ...f, time: e.target.value }))} placeholder="18:00" className="w-full rounded-lg border border-reiki-card-border px-3 py-2" />
-                  </div>
+                  <label className="block text-sm font-medium text-reiki-dark mb-1">Date *</label>
+                  <input type="date" required value={form.date} onChange={(e) => setForm((f) => ({ ...f, date: e.target.value }))} className="w-full rounded-lg border border-reiki-card-border px-3 py-2" />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-reiki-dark mb-1">Location</label>
-                  <input type="text" value={form.location} onChange={(e) => setForm((f) => ({ ...f, location: e.target.value }))} className="w-full rounded-lg border border-reiki-card-border px-3 py-2" />
+                  <label className="block text-sm font-medium text-reiki-dark mb-1">Time</label>
+                  <input type="text" value={form.time} onChange={(e) => setForm((f) => ({ ...f, time: e.target.value }))} placeholder="18:00" className="w-full rounded-lg border border-reiki-card-border px-3 py-2" />
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-reiki-dark mb-1">Location</label>
+                <input type="text" value={form.location} onChange={(e) => setForm((f) => ({ ...f, location: e.target.value }))} className="w-full rounded-lg border border-reiki-card-border px-3 py-2" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-reiki-dark mb-1">Type</label>
+                <select value={form.type} onChange={(e) => setForm((f) => ({ ...f, type: e.target.value }))} className="w-full rounded-lg border border-reiki-card-border px-3 py-2">
+                  <option value="Workshop">Workshop</option>
+                  <option value="Class">Class</option>
+                  <option value="Talk">Talk</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-reiki-dark mb-1">Description</label>
+                <textarea value={form.description} onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))} rows={3} className="w-full rounded-lg border border-reiki-card-border px-3 py-2" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-reiki-dark mb-1">Image URL</label>
+                <input type="text" value={form.image} onChange={(e) => setForm((f) => ({ ...f, image: e.target.value }))} placeholder="/slide2.JPG" className="w-full rounded-lg border border-reiki-card-border px-3 py-2" />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-reiki-dark mb-1">CTA button text</label>
+                  <input type="text" value={form.cta} onChange={(e) => setForm((f) => ({ ...f, cta: e.target.value }))} className="w-full rounded-lg border border-reiki-card-border px-3 py-2" />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-reiki-dark mb-1">Type</label>
-                  <select value={form.type} onChange={(e) => setForm((f) => ({ ...f, type: e.target.value }))} className="w-full rounded-lg border border-reiki-card-border px-3 py-2">
-                    <option value="Workshop">Workshop</option>
-                    <option value="Class">Class</option>
-                    <option value="Talk">Talk</option>
+                  <label className="block text-sm font-medium text-reiki-dark mb-1">Status</label>
+                  <select value={form.status} onChange={(e) => setForm((f) => ({ ...f, status: e.target.value }))} className="w-full rounded-lg border border-reiki-card-border px-3 py-2">
+                    <option value="upcoming">Upcoming</option>
+                    <option value="past">Past</option>
                   </select>
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-reiki-dark mb-1">Description</label>
-                  <textarea value={form.description} onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))} rows={3} className="w-full rounded-lg border border-reiki-card-border px-3 py-2" />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-reiki-dark mb-1">Image URL</label>
-                  <input type="text" value={form.image} onChange={(e) => setForm((f) => ({ ...f, image: e.target.value }))} placeholder="/slide2.JPG" className="w-full rounded-lg border border-reiki-card-border px-3 py-2" />
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-reiki-dark mb-1">CTA button text</label>
-                    <input type="text" value={form.cta} onChange={(e) => setForm((f) => ({ ...f, cta: e.target.value }))} className="w-full rounded-lg border border-reiki-card-border px-3 py-2" />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-reiki-dark mb-1">Status</label>
-                    <select value={form.status} onChange={(e) => setForm((f) => ({ ...f, status: e.target.value }))} className="w-full rounded-lg border border-reiki-card-border px-3 py-2">
-                      <option value="upcoming">Upcoming</option>
-                      <option value="past">Past</option>
-                    </select>
-                  </div>
-                </div>
-                <div className="flex gap-2">
-                  <button type="submit" disabled={saving} className="rounded-xl bg-reiki-olive px-4 py-2 text-sm font-semibold text-white hover:opacity-90 disabled:opacity-50">
-                    {saving ? "Saving…" : editing ? "Update event" : "Create event"}
-                  </button>
-                  <button type="button" onClick={() => { setEditing(null); setForm(emptyEvent); }} className="rounded-xl border border-reiki-card-border px-4 py-2 text-sm font-medium text-reiki-muted hover:bg-reiki-section">
-                    Cancel
-                  </button>
-                </div>
-              </form>
-            </section>
-          )}
+              </div>
+              <div className="flex gap-2">
+                <button type="submit" disabled={saving} className="rounded-xl bg-reiki-olive px-4 py-2 text-sm font-semibold text-white hover:opacity-90 disabled:opacity-50">
+                  {saving ? "Saving…" : editing ? "Update event" : "Create event"}
+                </button>
+                <button type="button" onClick={() => { setEditing(null); setForm(emptyEvent); }} className="rounded-xl border border-reiki-card-border px-4 py-2 text-sm font-medium text-reiki-muted hover:bg-reiki-section">
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </AdminModal>
         </div>
       </div>
     </div>

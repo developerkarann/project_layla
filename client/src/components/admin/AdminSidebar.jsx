@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   HiHome,
   HiUser,
@@ -13,6 +13,7 @@ import {
   HiChevronRight,
   HiSparkles,
 } from "react-icons/hi2";
+import { clearAdminToken } from "../../utils/adminAuth";
 
 const ICONS = {
   Home: HiHome,
@@ -27,6 +28,7 @@ const ICONS = {
 };
 
 export default function AdminSidebar({ nav, selectedPage, selectedSection, onSelect, manageLinks = [], isManageRoute, currentPath, onCloseSidebar }) {
+  const navigate = useNavigate();
   const [expanded, setExpanded] = useState(() => (selectedPage ? [selectedPage] : [nav[0]?.slug]));
 
   const toggle = (slug) => {
@@ -36,9 +38,9 @@ export default function AdminSidebar({ nav, selectedPage, selectedSection, onSel
   };
 
   return (
-    <aside className="flex h-full w-full flex-col border-r border-reiki-card-border bg-reiki-section-alt/80 md:w-72 md:min-w-[18rem] lg:w-80">
+    <aside className="flex h-full w-full flex-col border-r border-reiki-card-border bg-reiki-section-alt/80 md:w-72 md:min-w-[18rem] lg:w-76">
       {/* Brand strip */}
-      <div className="relative flex items-center justify-between border-b border-reiki-card-border bg-reiki-bg-stripe/90 px-4 py-4">
+      <div className="relative flex flex-col gap-2 border-b border-reiki-card-border bg-reiki-bg-stripe/90 px-4 py-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-reiki-olive/40 to-transparent" aria-hidden />
         <Link
           to="/"
@@ -81,17 +83,15 @@ export default function AdminSidebar({ nav, selectedPage, selectedSection, onSel
                 <button
                   type="button"
                   onClick={() => toggle(item.slug)}
-                  className={`flex w-full items-center justify-between gap-2 rounded-xl px-3 py-2.5 text-left transition ${
-                    isSelectedPage
-                      ? "bg-reiki-olive/15 text-reiki-dark"
-                      : "text-reiki-muted hover:bg-reiki-accent/30 hover:text-reiki-dark"
-                  }`}
+                  className={`flex w-full items-center justify-between gap-2 rounded-xl px-3 py-2.5 text-left transition ${isSelectedPage
+                    ? "bg-reiki-olive/15 text-reiki-dark"
+                    : "text-reiki-muted hover:bg-reiki-accent/30 hover:text-reiki-dark"
+                    }`}
                 >
                   <span className="flex items-center gap-2.5">
                     <span
-                      className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${
-                        isSelectedPage ? "bg-reiki-olive/30 text-reiki-olive" : "bg-reiki-section text-reiki-muted"
-                      }`}
+                      className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${isSelectedPage ? "bg-reiki-olive/30 text-reiki-olive" : "bg-reiki-section text-reiki-muted"
+                        }`}
                     >
                       <Icon className="text-base" />
                     </span>
@@ -119,11 +119,10 @@ export default function AdminSidebar({ nav, selectedPage, selectedSection, onSel
                           <button
                             type="button"
                             onClick={() => onSelect(item.slug, sec.key)}
-                            className={`block w-full rounded-lg px-3 py-2 text-left text-sm transition ${
-                              isSelected
-                                ? "bg-reiki-olive/20 font-medium text-reiki-dark"
-                                : "text-reiki-body hover:bg-reiki-accent/20 hover:text-reiki-dark"
-                            }`}
+                            className={`block w-full rounded-lg px-3 py-2 text-left text-sm transition ${isSelected
+                              ? "bg-reiki-olive/20 font-medium text-reiki-dark"
+                              : "text-reiki-body hover:bg-reiki-accent/20 hover:text-reiki-dark"
+                              }`}
                             style={{ fontFamily: "Lato, sans-serif" }}
                           >
                             {sec.label}
@@ -160,11 +159,23 @@ export default function AdminSidebar({ nav, selectedPage, selectedSection, onSel
         </div>
       )}
 
-      {/* Footer hint */}
-      <div className="border-t border-reiki-card-border px-4 py-3">
+      {/* Footer hint + logout */}
+      <div className="border-t border-reiki-card-border px-4 py-3 space-y-3">
         <p className="text-[10px] text-reiki-muted">
           Edit section content above; manage events, blog, services, gallery, and membership below.
         </p>
+        <button
+          type="button"
+          onClick={() => {
+            clearAdminToken();
+            if (onCloseSidebar) onCloseSidebar();
+            // Force full reload so AdminGate re-checks auth and shows login
+            window.location.href = "/admin";
+          }}
+          className="w-full rounded-xl border border-reiki-card-border bg-white px-3 py-2 text-xs font-semibold text-reiki-dark shadow-sm transition hover:bg-reiki-section hover:border-reiki-olive"
+        >
+          Log out
+        </button>
       </div>
     </aside>
   );

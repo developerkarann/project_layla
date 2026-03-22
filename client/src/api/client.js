@@ -1,4 +1,5 @@
 import { getAdminToken } from "../utils/adminAuth";
+import { getUserToken } from "../utils/userAuth";
 
 /**
  * API client base. All requests go through this so we can change base URL and error handling in one place.
@@ -12,10 +13,10 @@ const API_BASE =
     ? ""
     : "https://project-layla-cghn.vercel.app";
 
-function getHeaders(includeBody = false) {
+function getHeaders(includeBody = false, auth = "admin") {
   const headers = {};
   if (includeBody) headers["Content-Type"] = "application/json";
-  const token = getAdminToken();
+  const token = auth === "user" ? getUserToken() : auth === "admin" ? getAdminToken() : null;
   if (token) headers["Authorization"] = `Bearer ${token}`;
   return headers;
 }
@@ -25,8 +26,8 @@ function getHeaders(includeBody = false) {
  * @param {string} path - Path without leading slash (e.g. 'content/home/sections/hero')
  * @returns {Promise<object|null>}
  */
-export async function apiGet(path) {
-  const res = await fetch(`${API_BASE}/api/${path}`, { headers: getHeaders() });
+export async function apiGet(path, options = {}) {
+  const res = await fetch(`${API_BASE}/api/${path}`, { headers: getHeaders(false, options.auth) });
   if (res.status === 404) return null;
   if (!res.ok) throw new Error(await res.text() || `HTTP ${res.status}`);
   return res.json();
@@ -38,10 +39,10 @@ export async function apiGet(path) {
  * @param {object} body
  * @returns {Promise<object>}
  */
-export async function apiPut(path, body) {
+export async function apiPut(path, body, options = {}) {
   const res = await fetch(`${API_BASE}/api/${path}`, {
     method: "PUT",
-    headers: getHeaders(true),
+    headers: getHeaders(true, options.auth),
     body: JSON.stringify(body),
   });
   if (!res.ok) throw new Error(await res.text() || `HTTP ${res.status}`);
@@ -54,10 +55,10 @@ export async function apiPut(path, body) {
  * @param {object} body
  * @returns {Promise<object>}
  */
-export async function apiPost(path, body) {
+export async function apiPost(path, body, options = {}) {
   const res = await fetch(`${API_BASE}/api/${path}`, {
     method: "POST",
-    headers: getHeaders(true),
+    headers: getHeaders(true, options.auth),
     body: JSON.stringify(body),
   });
   if (!res.ok) throw new Error(await res.text() || `HTTP ${res.status}`);
@@ -68,10 +69,10 @@ export async function apiPost(path, body) {
  * Performs a DELETE request. Returns undefined on success (204).
  * @param {string} path
  */
-export async function apiDelete(path) {
+export async function apiDelete(path, options = {}) {
   const res = await fetch(`${API_BASE}/api/${path}`, {
     method: "DELETE",
-    headers: getHeaders(),
+    headers: getHeaders(false, options.auth),
   });
   if (res.status === 204) return;
   if (!res.ok) throw new Error(await res.text() || `HTTP ${res.status}`);

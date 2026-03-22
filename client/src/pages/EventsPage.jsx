@@ -1,14 +1,17 @@
-import { useEffect } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import LotusSectionIcon from "../components/LotusSectionIcon";
+import { getCurrentUser, registerForEvent } from "../api";
 import { fetchAllEvents } from "../store/slices/eventsSlice";
 import { selectUpcomingEvents, selectPastEvents, selectEventsLoading, selectEventsError } from "../store/slices/eventsSlice";
 import { formatEventDate, formatEventDateShort } from "../utils/fallbacks";
+import { isUserLoggedIn } from "../utils/userAuth";
 
 const HERO_IMAGE = "/slide1.JPG";
 
-function EventCardUpcoming({ event, index }) {
+function EventCardUpcoming({ event, index, onRegister, isRegistered }) {
   const contentOnRight = index % 2 === 1;
   return (
     <article className="group relative w-full min-h-[65vh] sm:min-h-[70vh] overflow-hidden rounded-3xl border border-reiki-card-border shadow-lg">
@@ -35,9 +38,14 @@ function EventCardUpcoming({ event, index }) {
           </h2>
           <p className="mt-2 font-lato text-sm text-reiki-accent">{event.location}</p>
           <p className="mt-4 font-lato text-base text-white/90 leading-relaxed">{event.description}</p>
-          <Link to="/contact" className={`mt-6 inline-block rounded-lg bg-white px-8 py-3 font-sans text-sm font-semibold text-reiki-dark transition hover:opacity-90 ${contentOnRight ? "" : "ml-auto"}`}>
-            {event.cta || "Register"}
-          </Link>
+          <button
+            type="button"
+            onClick={() => onRegister(event)}
+            disabled={isRegistered}
+            className={`mt-6 inline-block rounded-lg bg-white px-8 py-3 font-sans text-sm font-semibold text-reiki-dark transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-70 ${contentOnRight ? "" : "ml-auto"}`}
+          >
+            {isRegistered ? "Registered" : event.cta || "Register"}
+          </button>
         </div>
       </div>
     </article>
@@ -46,18 +54,33 @@ function EventCardUpcoming({ event, index }) {
 
 function EventCardPast({ event }) {
   return (
-    <article className="relative w-full min-h-[100vh] overflow-hidden">
-      <img src={event.image || "/slide5.JPG"} alt="" className="absolute inset-0 h-full w-full object-cover" />
-      <div className="absolute inset-0 bg-gradient-to-t from-reiki-dark/92 via-reiki-dark/40 to-transparent" aria-hidden />
-      <div className="absolute inset-0 flex items-end justify-center z-10 p-6 sm:p-8 lg:p-12 pb-16 sm:pb-20">
-        <div className="w-full max-w-3xl text-center">
-          <span className="font-lato text-base font-semibold uppercase tracking-wider text-white/80">
-            {formatEventDate(event.date)} · {event.type || "Event"}
+    <article className="group relative isolate overflow-hidden rounded-3xl border border-reiki-card-border bg-white shadow-md transition duration-300 hover:-translate-y-1.5 hover:shadow-2xl">
+      <div className="relative h-72 sm:h-80 lg:h-96">
+        <img src={event.image || "/slide5.JPG"} alt="" className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
+        <div className="absolute inset-0 bg-gradient-to-t from-reiki-dark/90 via-reiki-dark/35 to-transparent" aria-hidden />
+        <div className="absolute -right-10 -top-10 h-32 w-32 rounded-full bg-white/15 blur-xl" aria-hidden />
+        <div className="absolute left-4 top-4 z-10 flex flex-wrap items-center gap-2">
+          <span className="rounded-full bg-white/95 px-3 py-1 font-lato text-[11px] font-semibold uppercase tracking-wider text-reiki-dark shadow">
+            {event.type || "Event"}
           </span>
-          <h2 className="mt-3 font-garamond text-white leading-tight drop-shadow whitespace-nowrap text-base sm:text-2xl md:text-4xl lg:text-5xl xl:text-6xl" style={{ fontFamily: "EB Garamond" }}>
+          <span className="inline-flex items-center rounded-full bg-reiki-dark/90 px-3 py-1.5 font-lato text-xs font-medium text-white shadow">
+            {formatEventDateShort(event.date)}
+          </span>
+        </div>
+        <div className="absolute inset-x-0 bottom-0 z-10 p-5 sm:p-7">
+          <h2 className="font-garamond text-3xl leading-tight text-white drop-shadow sm:text-4xl" style={{ fontFamily: "EB Garamond" }}>
             {event.title}
           </h2>
-          <p className="mt-6 font-lato text-xl text-white/90 leading-relaxed mx-auto">{event.description}</p>
+        </div>
+      </div>
+      <div className="p-6 sm:p-7">
+        <span className="font-lato text-xs font-semibold uppercase tracking-wider text-reiki-muted">
+            {formatEventDate(event.date)} · {event.type || "Event"}
+        </span>
+        <p className="mt-3 font-lato text-base leading-relaxed text-reiki-body">{event.description}</p>
+        <div className="mt-5 flex items-center justify-between">
+          <span className="text-xs uppercase tracking-wider text-reiki-olive">Memories</span>
+          <span className="h-px w-20 bg-reiki-accent" />
         </div>
       </div>
     </article>
@@ -65,15 +88,84 @@ function EventCardPast({ event }) {
 }
 
 export default function EventsPage() {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const upcoming = useSelector(selectUpcomingEvents);
   const past = useSelector(selectPastEvents);
   const loading = useSelector(selectEventsLoading);
   const error = useSelector(selectEventsError);
+  const loggedIn = isUserLoggedIn();
+  const [registeredEventDbIds, setRegisteredEventDbIds] = useState([]);
+  const [selectedEvent, setSelectedEvent] = useState(null);
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [feedback, setFeedback] = useState("");
 
   useEffect(() => {
     dispatch(fetchAllEvents());
   }, [dispatch]);
+
+  useEffect(() => {
+    if (!loggedIn) {
+      setRegisteredEventDbIds([]);
+      return;
+    }
+    let mounted = true;
+    getCurrentUser()
+      .then((response) => {
+        if (!mounted) return;
+        const userEvents = Array.isArray(response?.user?.events) ? response.user.events : [];
+        setRegisteredEventDbIds(userEvents.map((event) => String(event._id)));
+      })
+      .catch(() => {
+        if (mounted) setRegisteredEventDbIds([]);
+      });
+    return () => {
+      mounted = false;
+    };
+  }, [loggedIn]);
+
+  const registeredSet = useMemo(() => new Set(registeredEventDbIds), [registeredEventDbIds]);
+
+  const handleRegisterClick = (event) => {
+    if (!loggedIn) {
+      navigate("/login");
+      return;
+    }
+    setFeedback("");
+    setSelectedEvent(event);
+    setIsConfirmOpen(true);
+  };
+
+  const closeModal = () => {
+    if (isSubmitting) return;
+    setIsConfirmOpen(false);
+    setSelectedEvent(null);
+  };
+
+  const confirmRegistration = async () => {
+    if (!selectedEvent || isSubmitting) return;
+    setIsSubmitting(true);
+    setFeedback("");
+    try {
+      const response = await registerForEvent(selectedEvent.id);
+      const userEvents = Array.isArray(response?.user?.events) ? response.user.events : [];
+      setRegisteredEventDbIds(userEvents.map((event) => String(event._id)));
+      setFeedback(response?.message || "Event registration successful");
+      setIsConfirmOpen(false);
+      setSelectedEvent(null);
+    } catch (err) {
+      let message = "Could not register for event";
+      try {
+        message = JSON.parse(err.message || "{}")?.message || message;
+      } catch {
+        if (err?.message) message = err.message;
+      }
+      setFeedback(message);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <main className="min-h-screen bg-page-bg">
@@ -116,7 +208,13 @@ export default function EventsPage() {
             <>
               <div className="mt-10 space-y-10">
                 {upcoming.map((event, index) => (
-                  <EventCardUpcoming key={event.id} event={event} index={index} />
+                  <EventCardUpcoming
+                    key={event.id}
+                    event={event}
+                    index={index}
+                    onRegister={handleRegisterClick}
+                    isRegistered={registeredSet.has(String(event._id))}
+                  />
                 ))}
               </div>
               {upcoming.length === 0 && (
@@ -145,9 +243,14 @@ export default function EventsPage() {
             Past <span className="text-reiki-olive">events</span>
           </h2>
         </div>
-        <div className="space-y-0">
-          {past.map((event) => (
-            <EventCardPast key={event.id} event={event} />
+        <div className="mx-auto grid max-w-6xl grid-cols-1 gap-8 px-4 lg:grid-cols-2">
+          {past.map((event, index) => (
+            <div
+              key={event.id}
+              className={`${index % 2 === 0 ? "lg:translate-y-0" : "lg:translate-y-8"}`}
+            >
+              <EventCardPast event={event} />
+            </div>
           ))}
         </div>
       </section>
@@ -165,6 +268,41 @@ export default function EventsPage() {
           </Link>
         </div>
       </section>
+      {feedback ? (
+        <div className="fixed bottom-5 right-5 z-40 rounded-lg bg-reiki-dark px-4 py-3 text-sm text-white shadow-lg">
+          {feedback}
+        </div>
+      ) : null}
+      {isConfirmOpen && selectedEvent ? (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-reiki-dark/55 px-4">
+          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl">
+            <h3 className="text-xl text-reiki-dark" style={{ fontFamily: "EB Garamond" }}>
+              Confirm Registration
+            </h3>
+            <p className="mt-2 text-sm text-reiki-body">
+              Do you want to register for <span className="font-semibold text-reiki-dark">{selectedEvent.title}</span>?
+            </p>
+            <div className="mt-5 flex items-center justify-end gap-3">
+              <button
+                type="button"
+                onClick={closeModal}
+                disabled={isSubmitting}
+                className="rounded-lg border border-reiki-card-border px-4 py-2 text-sm font-semibold text-reiki-dark disabled:opacity-70"
+              >
+                No
+              </button>
+              <button
+                type="button"
+                onClick={confirmRegistration}
+                disabled={isSubmitting}
+                className="rounded-lg bg-reiki-dark px-4 py-2 text-sm font-semibold text-white disabled:opacity-70"
+              >
+                {isSubmitting ? "Registering..." : "Yes"}
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </main>
   );
 }

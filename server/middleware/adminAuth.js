@@ -23,7 +23,7 @@ function isValidToken(token) {
 }
 
 /**
- * Middleware: allow GET and admin login/verify; for all other requests require valid Bearer token.
+ * Middleware: allow GET, user auth routes, and admin login/verify; for all other requests require valid Bearer token.
  * Mount this on the API router so path is relative to /api (e.g. "content/...", "admin/login").
  */
 function requireAdminAuth(req, res, next) {
@@ -32,6 +32,8 @@ function requireAdminAuth(req, res, next) {
 
   // Allow GET (read-only) everywhere
   if (method === "GET") return next();
+
+  if (path.startsWith("auth/")) return next();
 
   // Allow POST /api/admin/login and GET /api/admin/verify without token
   if (path === "admin/login" && method === "POST") return next();

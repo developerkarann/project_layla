@@ -204,3 +204,23 @@ export async function getSettingByKey(key) {
 export async function setSetting(key, value) {
   return apiPut(`settings/${encodeURIComponent(key)}`, { value });
 }
+
+export async function registerUser(body) {
+  return apiPost("auth/register", body, { auth: "none" });
+}
+
+export async function loginUser(body) {
+  return apiPost("auth/login", body, { auth: "none" });
+}
+
+export async function getCurrentUser() {
+  return apiGet("auth/me", { auth: "user" });
+}
+
+export async function logoutUser() {
+  return apiPost("auth/logout", {}, { auth: "user" });
+}
+
+export async function registerForEvent(eventId) {
+  return apiPost(`auth/events/${encodeURIComponent(eventId)}/register`, {}, { auth: "user" });
+}

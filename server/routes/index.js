@@ -12,6 +12,9 @@ const settingsRoutes = require("./settings.routes");
 const eventsRoutes = require("./events.routes");
 const membershipRoutes = require("./membership.routes");
 const adminRoutes = require("./admin.routes");
+const authRoutes = require("./auth.routes");
+
+router.use("/auth", authRoutes);
 
 // All non-GET requests (except admin login/verify) require valid admin token
 router.use(requireAdminAuth);

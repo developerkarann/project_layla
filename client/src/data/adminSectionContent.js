@@ -32,7 +32,13 @@ export const SECTION_CONTENT = {
       ]),
     },
     "holistic-healing-intro": {
-      fields: defaultFields({ title: "Holistic healing for empowered living", body: "Mission and approach intro. Create the life you want to live." }),
+      fields: [
+        { id: "title", label: "Title", type: "text", value: "Holistic healing for empowered living" },
+        { id: "body", label: "Body / CTA line", type: "textarea", value: "Create the life you want to live !" },
+        { id: "cta", label: "Button text", type: "text", value: "Learn more" },
+        { id: "missionParagraph", label: "Mission paragraph", type: "textarea", value: "My mission is to ignite self-empowerment and self-healing through quantum shifts of consciousness. I believe in the ripple effect of all things: one deep positive change in a person can create boundless positive outcome far beyond this one person" },
+        { id: "approachParagraph", label: "Approach paragraph", type: "textarea", value: "My approach to achieve this goal is rooted in the consideration that you are a conscious and intelligent being with infinite potential and powers. My ethics and values are founded on the respect of your free choice and inner knowing of what is good for you. On that basis, it is a privilege to accompany you and witness your blossoming, your joy, your victories but also help you overcome sorrows, loss, hurts and transcend struggles." },
+      ],
     },
     "awaken-self-healing": {
       fields: defaultFields({ title: "Awakens your powers of self healing", body: "Healing and transformation, embracing you without judgment. Trust in yourself and your power." }),
